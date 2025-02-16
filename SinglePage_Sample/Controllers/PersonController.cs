@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+
 using SinglePage_Sample.ApplicationServices.Contracts;
 using SinglePage_Sample.ApplicationServices.Dtos.PersonDtos;
 
@@ -37,6 +38,7 @@ namespace SinglePage.Sample01.Controllers
         public async Task<IActionResult> Get(GetPersonServiceDto dto)
         {
             Guard_PersonService();
+          
             var getResponse = await _personService.Get(dto);
             var response = getResponse.Value;
             if (response is null)
@@ -52,17 +54,54 @@ namespace SinglePage.Sample01.Controllers
         public async Task<IActionResult> Post([FromBody] PostPersonServiceDto dto)
         {
             Guard_PersonService();
-            var postedDto = new GetPersonServiceDto() { Email = dto.Email };
-            var getResponse = await _personService.Get(postedDto);
+            var postDto = new GetPersonServiceDto() { Email = dto.Email };
+            var getResponse = await _personService.Get(postDto);
 
-            if (ModelState.IsValid && getResponse.Value is null)
+            switch (ModelState.IsValid)
             {
-                var postResponse = await _personService.Post(dto);
-                return postResponse.IsSuccessful ? Ok() : BadRequest();
+                case true when getResponse.Value is null:
+                    {
+                        var postResponse = await _personService.Post(dto);
+                        return postResponse.IsSuccessful ? Ok() : BadRequest();
+                    }
+                case true when getResponse.Value is not null:
+                    return Conflict(dto);
+                default:
+                    return BadRequest();
             }
-            else if (ModelState.IsValid && getResponse.Value is not null)
+        }
+        #endregion
+
+        #region [- Put() -]
+        [HttpPost]
+        public async Task<IActionResult> Put([FromBody] PutPersonServiceDto dto)
+        {
+            Guard_PersonService();
+
+            //Pay attention to Email uniqueness problem in the app.
+
+            var putDto = new GetPersonServiceDto() { Email = dto.Email };
+
+            #region [- For checking & avoiding email duplication -]
+            //var getResponse = await _personService.Get(putDto);//For checking & avoiding email duplication
+            //switch (ModelState.IsValid)
+            //{
+            //    case true when getResponse.Value is null:
+            //    {
+            //        var putResponse = await _personService.Put(dto);
+            //        return putResponse.IsSuccessful ? Ok() : BadRequest();
+            //    }
+            //    case true when getResponse.Value is not null://For checking & avoiding email duplication
+            //        return Conflict(dto);
+            //    default:
+            //        return BadRequest();
+            //} 
+            #endregion
+
+            if (ModelState.IsValid)
             {
-                return Conflict(dto);
+                var putResponse = await _personService.Put(dto);
+                return putResponse.IsSuccessful ? Ok() : BadRequest();
             }
             else
             {
@@ -70,59 +109,14 @@ namespace SinglePage.Sample01.Controllers
             }
         }
         #endregion
-        #region [- Put() -]
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] PutPersonServiceDto dto)
-        {
-            Guard_PersonService();
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var getResponse = await _personService.Get(new GetPersonServiceDto { Email = dto.Email });
-
-            if (getResponse.Value is null)
-            {
-                return NotFound($"Person with email {dto.Email} not found.");
-            }
-
-            var putResponse = await _personService.Put(dto);
-
-            return putResponse.IsSuccessful ? Ok() : BadRequest("Failed to update the person.");
-        }
-        #endregion
-        #region [- Delete() -]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> Delete([FromBody] DeletePersonServiceDto dto)
         {
-           
             Guard_PersonService();
-
-           
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // Check if the person exists
-            var getResponse = await _personService.Get(new GetPersonServiceDto { Id = dto.Id });
-
-            if (getResponse.Value is null)
-            {
-                return NotFound($"Person with ID {dto.Id} not found.");
-            }
-
-            // Attempt to delete the person
             var deleteResponse = await _personService.Delete(dto);
-
-            // Return appropriate response based on the delete operation's result
             return deleteResponse.IsSuccessful ? Ok() : BadRequest();
         }
-        #endregion
-
-
 
         #region [- PersonServiceGuard() -]
         private ObjectResult Guard_PersonService()

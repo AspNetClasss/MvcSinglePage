@@ -94,16 +94,16 @@ namespace SinglePage.Sample01.ApplicationServices.Services
             {
                 return new Response<PostPersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
             }
-            var postedPerson = new Person()
+            var postPerson = new Person()
             {
                 Id = new Guid(),
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email
             };
-            var insertedResponse = await _personRepository.Insert(postedPerson);
+            var insertResponse = await _personRepository.Insert(postPerson);
 
-            if (!insertedResponse.IsSuccessful)
+            if (!insertResponse.IsSuccessful)
             {
                 return new Response<PostPersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.Error, dto);
             }
@@ -113,56 +113,50 @@ namespace SinglePage.Sample01.ApplicationServices.Services
         }
         #endregion
 
-      
-
-      
-
+        #region [- Put() -]
         public async Task<IResponse<PutPersonServiceDto>> Put(PutPersonServiceDto dto)
         {
             if (dto is null)
             {
                 return new Response<PutPersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
             }
-            var putedPerson = new Person()
+            var putPerson = new Person()
             {
                 Id = dto.Id,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-
+                Email = dto.Email
             };
-            var insertedResponse = await _personRepository.Update(putedPerson);
+            var updateResponse = await _personRepository.Update(putPerson);
 
-            if (!insertedResponse.IsSuccessful)
+            if (!updateResponse.IsSuccessful)
             {
                 return new Response<PutPersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.Error, dto);
             }
+
             var response = new Response<PutPersonServiceDto>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, dto);
             return response;
         }
+        #endregion
 
+        #region [- Delete() -]
         public async Task<IResponse<DeletePersonServiceDto>> Delete(DeletePersonServiceDto dto)
         {
-
             if (dto is null)
             {
                 return new Response<DeletePersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
             }
+            var person = new Person() { Id = dto.Id };
 
-            var personToDelete = new Person()
-            {
-                Id = dto.Id
-            };
+            var deleteResponse = await _personRepository.Delete(person);
 
-            var deleteResponse = await _personRepository.Delete(personToDelete);
-
-            if (!deleteResponse.IsSuccessful)
+            if (deleteResponse is null || !deleteResponse.IsSuccessful)
             {
                 return new Response<DeletePersonServiceDto>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.Error, dto);
             }
             var response = new Response<DeletePersonServiceDto>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, dto);
             return response;
         }
+        #endregion
     }
 }
-
-

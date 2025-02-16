@@ -4,10 +4,8 @@ using System.Net;
 
 using SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts;
 using SinglePage_Sample.Models.DomainModels.Services.Contracts;
-using SinglePage_Sample.Models.DomainModels.PersonAggregates;
 using SinglePage_Sample.Frameworks.ResponseFrameworks;
-using SinglePage_Sample.Migrations;
-using Person = SinglePage_Sample.Models.DomainModels.PersonAggregates.Person;
+using SinglePage_Sample.Models.DomainModels.PersonAggregates;
 
 namespace SinglePage.Sample01.Models.Services.Repositories
 {
@@ -19,26 +17,6 @@ namespace SinglePage.Sample01.Models.Services.Repositories
         public PersonRepository(ProjectDbContext projectDbContext)
         {
             _projectDbContext = projectDbContext;
-        }
-        #endregion
-
-        #region [- Insert() -]
-        public async Task<IResponse<Person>> Insert(Person model)
-        {
-            try
-            {
-                if (model is null)
-                {
-                    return new Response<Person>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
-                }
-                await _projectDbContext.AddAsync(model);
-                var response = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
-                return response;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
         #endregion
 
@@ -85,6 +63,28 @@ namespace SinglePage.Sample01.Models.Services.Repositories
         }
         #endregion
 
+        #region [- Insert() -]
+        public async Task<IResponse<Person>> Insert(Person model)
+        {
+            try
+            {
+                if (model is null)
+                {
+                    return new Response<Person>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
+                }
+                await _projectDbContext.AddAsync(model);
+                await _projectDbContext.SaveChangesAsync();
+                var response = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
+        #region [- Update() -]
         public async Task<IResponse<Person>> Update(Person model)
         {
             try
@@ -93,21 +93,21 @@ namespace SinglePage.Sample01.Models.Services.Repositories
                 {
                     return new Response<Person>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
                 }
-                var person = _projectDbContext.Update(model);
-                await _projectDbContext.AddAsync(model);
-                var respons = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
-                return respons;
-
-
-
+                //_projectDbContext.Update(model);
+                _projectDbContext.Entry(model).State = EntityState.Modified;
+                await _projectDbContext.SaveChangesAsync();
+                var response = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
+                return response;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 throw;
             }
         }
+        #endregion
 
-        public  async Task<IResponse<Person>> Delete(Person model)
+        #region [- Delete() -]
+        public async Task<IResponse<Person>> Delete(Person model)
         {
             try
             {
@@ -115,20 +115,17 @@ namespace SinglePage.Sample01.Models.Services.Repositories
                 {
                     return new Response<Person>(false, HttpStatusCode.UnprocessableContent, ResponseMessages.NullInput, null);
                 }
-                var p = _projectDbContext.Remove(model);
 
+                _projectDbContext.Person.Remove(model);
                 await _projectDbContext.SaveChangesAsync();
-                var respons = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
-                return respons;
-
+                var response = new Response<Person>(true, HttpStatusCode.OK, ResponseMessages.SuccessfullOperation, model);
+                return response;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 throw;
             }
-           
         }
+        #endregion
     }
 }
-
-
