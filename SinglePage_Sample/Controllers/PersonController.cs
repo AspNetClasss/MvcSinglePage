@@ -35,10 +35,10 @@ namespace SinglePage.Sample01.Controllers
         #endregion
 
         #region [- Get() -]
-        public async Task<IActionResult> Get(GetPersonServiceDto dto)
+        public async Task<IActionResult> Get(  Guid id )
         {
             Guard_PersonService();
-          
+            var dto = new GetPersonServiceDto() { Id = id };
             var getResponse = await _personService.Get(dto);
             var response = getResponse.Value;
             if (response is null)

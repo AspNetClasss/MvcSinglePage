@@ -161,27 +161,27 @@ function Delete() {
     idRowForDelete = "";
 }
 
-function DeleteSelected() {
-    let deleteSelectedDto = { DeletePersonDtosList: [] };
-    selectedRowsList.forEach((personId) => {
-        deleteSelectedDto.DeletePersonDtosList.push({ Id: personId });
-    });
-    fetch("http://Localhost:5290/Person/DeleteSelected", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "*/*",
-        },
-        body: JSON.stringify(deleteSelectedDto),
-    }).then((res) => {
-        if (res.status == 200) {
-            TriggerResultMessage("Operation Successful");
-            LoadData();
-        } else {
-            TriggerResultMessage("Operation Failed");
-        }
-    });
-}
+//function DeleteSelected() {
+//    let deleteSelectedDto = { DeletePersonDtosList: [] };
+//    selectedRowsList.forEach((personId) => {
+//        deleteSelectedDto.DeletePersonDtosList.push({ Id: personId });
+//    });
+//    fetch("http://Localhost:5290/Person/DeleteSelected", {
+//        method: "POST",
+//        headers: {
+//            "Content-Type": "application/json",
+//            Accept: "*/*",
+//        },
+//        body: JSON.stringify(deleteSelectedDto),
+//    }).then((res) => {
+//        if (res.status == 200) {
+//            TriggerResultMessage("Operation Successful");
+//            LoadData();
+//        } else {
+//            TriggerResultMessage("Operation Failed");
+//        }
+//    });
+//}
 
 function SelectDeselectAll() {
     const checkBoxes = document.getElementsByName("chk");
@@ -209,39 +209,54 @@ function SelectRow(checkBox) {
     console.clear();
     if (checkBox.checked === true) {
         selectedRows.push(checkBox.id);
+    } else {
+        selectedRows.splice(selectedRows.indexOf(checkBox.id), 1);
     }
-    else selectedRows.splice(selectedRows.indexOf(checkBox.id), 1);
 
     console.log(`selectedRows: ${selectedRows.length}`);
 
     switch (selectedRows.length) {
         case 1:
-
             RefreshPage();
             btnEdit.disabled = false;
             btnDelete.disabled = false;
+
+            // بررسی وجود ردیف و سلول‌ها
+            const selectedRow = document.querySelector(`tr[id="${selectedRows[0]}"]`);
+            if (!selectedRow) {
+                console.error(`Row with id "${selectedRows[0]}" not found.`);
+                return;
+            }
+
+            const firstNameCell = selectedRow.querySelector(`td[id="firstNameCell"]`);
+            const lastNameCell = selectedRow.querySelector(`td[id="lastNameCell"]`);
+            const emailCell = selectedRow.querySelector(`td[id="emailCell"]`);
+
+            if (!firstNameCell || !lastNameCell || !emailCell) {
+                console.error("One or more cells are missing in the selected row.");
+                return;
+            }
+
             id.value = selectedRows[0];
-            firstName.value = document.querySelector(
-                `tr[id="${selectedRows[0]}"] td[id="firstNameCell"]`
-            ).innerText;
-            lastName.value = document.querySelector(
-                `tr[id="${selectedRows[0]}"] td[id="lastNameCell"]`
-            ).innerText;
-            email.value = document.querySelector(
-                `tr[id="${selectedRows[0]}"] td[id="emailCell"]`
-            ).innerText;         
+            firstName.value = firstNameCell.innerText;
+            lastName.value = lastNameCell.innerText;
+            email.value = emailCell.innerText;
             break;
+
         case selectedRows.length > 1:
             RefreshPage();
             break;
-        case selectedRows.length == 1:
+
+        case selectedRows.length === 1:
             RefreshPage();
             break;
+
         default:
             RefreshPage();
             break;
     }
 }
+
 function ConfirmDelete(button) {
     console.clear();
     //console.log(button);
@@ -256,7 +271,7 @@ function ConfirmDelete(button) {
 function GetDetails(button) {
     console.log(button.id); 
     let id = button.id;
-
+    
     fetch(`http://Localhost:5290/Person/Get?id=${id}`)
         .then((res) => res.json())
         .then((json) => {
@@ -322,17 +337,25 @@ function ValidateFormData() {
     return isValidData;
 }
 function PassDetails(id) {
-    let firstName = document.querySelector(
-        `tr[id="${id}"] td[id="firstNameCell"]`
-    ).innerText;
-    let lastName = document.querySelector(
-        `tr[id="${id}"] td[id="lastNameCell"]`
-    ).innerText;
-    let email = document.querySelector(
-        `tr[id="${id}"] td[id="emailCell"]`
-    ).innerText;
-    confirmDeleteModalBody.innerHTML = `You are deleting :<br><strong>First Name : ${firstName}<br>Last Name : ${lastName}<br>Email : ${email}</strong><br>Are you sure ?`;
+    const firstNameCell = document.querySelector(`tr[id="${id}"] td[id="firstNameCell"]`);
+    const lastNameCell = document.querySelector(`tr[id="${id}"] td[id="lastNameCell"]`);
+    const emailCell = document.querySelector(`tr[id="${id}"] td[id="emailCell"]`);
+
+    if (!firstNameCell || !lastNameCell || !emailCell) {
+        console.error("One or more cells are null. ID might be incorrect:", id);
+        return;
+    }
+
+    const firstName = firstNameCell.innerText;
+    const lastName = lastNameCell.innerText;
+    const email = emailCell.innerText;
+
+    confirmDeleteModalBody.innerHTML = `You are deleting :<br>
+        <strong>First Name : ${firstName}<br>
+        Last Name : ${lastName}<br>
+        Email : ${email}</strong><br>Are you sure ?`;
 }
+
 function TriggerResultMessage(message) {
     resultMessage.innerText = message;
     resultMessage.style.opacity = "1";

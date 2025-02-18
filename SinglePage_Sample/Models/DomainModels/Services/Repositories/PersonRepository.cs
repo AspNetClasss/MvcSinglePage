@@ -43,7 +43,7 @@ namespace SinglePage.Sample01.Models.Services.Repositories
             try
             {
                 var responseValue = new Person();
-                if (person.Id.ToString() != "")
+                if (person.Id.ToString() == "")
                 {
                     //responseValue = await _projectDbContext.Person.FindAsync(person.Email);
                     responseValue = await _projectDbContext.Person.Where(c => c.Email == person.Email).SingleOrDefaultAsync();
