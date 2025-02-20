@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts {
+namespace SinglePage_Sample.Frameworks {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts.ResponseMessages", typeof(ResponseMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SinglePage_Sample.Frameworks.ResponseMessages", typeof(ResponseMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

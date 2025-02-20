@@ -1,10 +1,11 @@
 ﻿
 using SinglePage_Sample.ApplicationServices.Contracts;
 using SinglePage_Sample.ApplicationServices.Dtos.PersonDtos;
+using SinglePage_Sample.Frameworks;
 using SinglePage_Sample.Frameworks.ResponseFrameworks;
 using SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts;
 using SinglePage_Sample.Models.DomainModels.PersonAggregates;
-using SinglePage_Sample.Models.DomainModels.Services.Contracts;
+using SinglePage_Sample.Models.Services.Contracts;
 using System.Net;
 
 namespace SinglePage.Sample01.ApplicationServices.Services

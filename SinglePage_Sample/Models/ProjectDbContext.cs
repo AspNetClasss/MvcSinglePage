@@ -4,7 +4,7 @@ using System;
 using SinglePage_Sample.Models.DomainModels.PersonAggregates;
 using System.Collections.Generic;
 
-namespace SinglePage.Sample01.Models
+namespace SinglePage_Sample.Models
 {
     public class ProjectDbContext : DbContext
     {

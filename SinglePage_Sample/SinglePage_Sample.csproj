@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Frameworks\ResponseFrameworks\Contracts\ResponseMessages.Designer.cs">
+    <Compile Update="Frameworks\ResponseMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponseMessages.resx</DependentUpon>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Frameworks\ResponseFrameworks\Contracts\ResponseMessages.resx">
+    <EmbeddedResource Update="Frameworks\ResponseMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResponseMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>

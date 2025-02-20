@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 
 using SinglePage.Sample01.ApplicationServices.Services;
-using SinglePage.Sample01.Models;
-
-using SinglePage.Sample01.Models.Services.Repositories;
 using SinglePage_Sample.ApplicationServices.Contracts;
-using SinglePage_Sample.Models.DomainModels.Services.Contracts;
+using SinglePage_Sample.Models;
+using SinglePage_Sample.Models.Services.Contracts;
+using SinglePage_Sample.Models.Services.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

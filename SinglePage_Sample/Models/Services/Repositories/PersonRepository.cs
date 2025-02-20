@@ -3,11 +3,12 @@
 using System.Net;
 
 using SinglePage_Sample.Frameworks.ResponseFrameworks.Contracts;
-using SinglePage_Sample.Models.DomainModels.Services.Contracts;
 using SinglePage_Sample.Frameworks.ResponseFrameworks;
 using SinglePage_Sample.Models.DomainModels.PersonAggregates;
+using SinglePage_Sample.Models.Services.Contracts;
+using SinglePage_Sample.Frameworks;
 
-namespace SinglePage.Sample01.Models.Services.Repositories
+namespace SinglePage_Sample.Models.Services.Repositories
 {
     public class PersonRepository : IPersonRepository
     {
